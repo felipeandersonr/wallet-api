@@ -1,0 +1,17 @@
+services:
+  db:
+    image: postgres:16
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root123
+      - POSTGRES_DB=wallet_db
+    logging:
+      options:
+        max-size: "10m"
+
+volumes:
+  postgres_data:

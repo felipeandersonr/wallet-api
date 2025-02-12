@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "wallet-api"
+version = "0.1.0"
+description = ""
+authors = ["felipeandersonr <felipeatrodrigues34@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = {extras = ["standard"], version = "^0.115.8"}
+pydantic-settings = "^2.7.1"
+alembic = "^1.14.1"
+sqlalchemy = "^2.0.38"
+bcrypt = "^4.2.1"
+psycopg2 = "^2.9.10"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
