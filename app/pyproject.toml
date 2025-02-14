@@ -13,6 +13,7 @@ alembic = "^1.14.1"
 sqlalchemy = "^2.0.38"
 bcrypt = "^4.2.1"
 psycopg2 = "^2.9.10"
+loguru = "^0.7.3"
 
 
 [tool.poetry.group.dev.dependencies]

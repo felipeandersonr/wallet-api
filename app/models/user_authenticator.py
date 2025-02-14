@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from sqlalchemy import func, ForeignKey, TIMESTAMP
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.models.database import table_registry
+from app.database import table_registry
 from app.utils.safety import generate_random_token
 
 
