@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from sqlalchemy import func, ForeignKey, TIMESTAMP
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.models.database import table_registry
+from app.database import table_registry
 from app.utils.safety import generate_random_token
 
 
@@ -13,7 +13,7 @@ class UserAuthenticator:
 
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True, init=False)
     token: Mapped[str] = mapped_column(unique=True, nullable=False)
 
     is_active: Mapped[bool] = mapped_column(default=True)
