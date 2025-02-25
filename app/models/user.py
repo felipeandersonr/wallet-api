@@ -10,11 +10,12 @@ from app.database import table_registry
 class User:
     __tablename__ = "users"
 
-    id: Mapped[int] = mapped_column(init=False, autoincrement=True, primary_key=True)
+    id: Mapped[int] = mapped_column(init=False, primary_key=True)
 
     name: Mapped[str]
     hashed_password: Mapped[str]
     email: Mapped[str] = mapped_column(unique=True)
+    nickname: Mapped[str] = mapped_column(unique=True)
 
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True),

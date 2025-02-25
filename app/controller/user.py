@@ -15,13 +15,21 @@ class UserController:
         self.session = session
 
     def create_user(self, user_data: UserSchema) -> UserPublic:
-        statement = select(exists().where(User.email == user_data.email))
-        exists_user = self.session.scalar(statement)
+        email_statement = select(exists().where(User.email == user_data.email))
+        nickname_statement = select(exists().where(User.nickname == user_data.nickname))
 
-        if exists_user:
+        if self.session.scalar(email_statement):
             exception = HTTPException(
                 status_code=HTTPStatus.BAD_REQUEST,
-                detail="Username already exists"
+                detail="User email already used"
+            )
+
+            raise exception
+
+        if self.session.scalar(nickname_statement):
+            exception = HTTPException(
+                status_code=HTTPStatus.BAD_REQUEST,
+                detail="Nickname already used"
             )
 
             raise exception
@@ -31,6 +39,7 @@ class UserController:
         new_user = User(
             name=user_data.name,
             email=user_data.email,
+            nickname=user_data.nickname,
             hashed_password=hashed_password
         )
 
@@ -41,8 +50,9 @@ class UserController:
         logger.info(f"create user {new_user.name}/{new_user.email} in database")
 
         user_public = UserPublic(
-            name=new_user.name,
-            email=new_user.email
+            name=user_data.name,
+            email=user_data.email,
+            nickname=user_data.nickname
         )
 
         return user_public

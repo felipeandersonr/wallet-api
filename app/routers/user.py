@@ -16,8 +16,3 @@ def create_user(user_data: UserSchema, session: Session = Depends(get_session)):
     new_user = UserController(session).create_user(user_data)
 
     return new_user
-
-
-@router.get("user")
-def get_users():
-    pass
