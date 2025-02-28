@@ -18,21 +18,22 @@ class LoginController(BaseController):
             .where(User.nickname == user_form_data.username)
         ).first() 
 
+        credentials_exception = HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail="Incorrect nick or password"
+        )
+
         if not result:
-            raise HTTPException(
-                status_code=HTTPStatus.BAD_REQUEST,
-                detail="Incorrect nick or password"
-            )
+            raise credentials_exception
         
         user_hashed_password, user_id = result 
 
         user_password_match = verify_password(password=user_form_data.password, hashed_password=user_hashed_password)
 
         if not user_password_match:
-            raise HTTPException(
-                status_code=HTTPStatus.BAD_REQUEST,
-                detail="Incorrect nick or password"
-            )
+            raise credentials_exception
+        
+        self._deactivate_old_user_authenticator(user_id)
 
         new_user_authenticator = UserAuthenticator(
             user_id=user_id
@@ -55,13 +56,13 @@ class LoginController(BaseController):
         return token
 
     def logout(self, user_id: int):
-        active_token = self.session.scalar(
-            select(UserAuthenticator)
-            .where(UserAuthenticator.user_id == user_id and UserAuthenticator.is_active == True)
-        )
-
-        active_token.delete()
+        self._deactivate_old_user_authenticator(user_id)
 
         self.session.commit()
 
-        return True
+    def _deactivate_old_user_authenticator(self, user_id: int):
+        active_token = self.session.query(UserAuthenticator)\
+            .filter(UserAuthenticator.user_id == user_id and UserAuthenticator.is_active == True)\
+            .update({"is_active": False})
+
+        self.session.refresh(active_token)

@@ -6,6 +6,7 @@ from starlette.testclient import TestClient
 from app.main import app
 from app.database import table_registry, get_session
 from app.models.user import User
+from app.models.user_authenticator import UserAuthenticator
 from app.utils.fake_data import fake_data
 from app.utils.safety import hash_password
 
@@ -60,3 +61,19 @@ def common_user(session) -> User:
     session.commit()
 
     return new_user
+
+
+# user authenticator fixtures 
+@pytest.fixture
+def common_user_authenticated(session, common_user):
+    new_authenticator = UserAuthenticator(
+        user_id=common_user.id
+    )
+
+    new_authenticator.generate()
+    new_authenticator.use()
+
+    session.add(new_authenticator)
+    session.commit()
+
+    return new_authenticator
