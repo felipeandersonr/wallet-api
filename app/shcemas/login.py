@@ -2,5 +2,5 @@ from pydantic import BaseModel
 
 
 class TokenPublic(BaseModel):
-    nickname: str
-    password: str
+    access_token: str
+    token_type: str

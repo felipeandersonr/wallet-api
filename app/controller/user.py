@@ -3,17 +3,14 @@ from http import HTTPStatus
 from fastapi import HTTPException
 from loguru import logger
 from sqlalchemy import select, exists
-from sqlalchemy.orm import Session
 
+from app.controller.base_controller import BaseController
 from app.models.user import User
 from app.shcemas.user import UserPublic, UserSchema
 from app.utils.safety import hash_password
 
 
-class UserController:
-    def __init__(self, session: Session):
-        self.session = session
-
+class UserController(BaseController):
     def create_user(self, user_data: UserSchema) -> UserPublic:
         email_statement = select(exists().where(User.email == user_data.email))
         nickname_statement = select(exists().where(User.nickname == user_data.nickname))

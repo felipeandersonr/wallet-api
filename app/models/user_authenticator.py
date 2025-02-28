@@ -14,7 +14,7 @@ class UserAuthenticator:
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
 
     id: Mapped[int] = mapped_column(primary_key=True, init=False)
-    token: Mapped[str] = mapped_column(unique=True, nullable=False)
+    token: Mapped[str] = mapped_column(unique=True, nullable=False, init=False)
 
     is_active: Mapped[bool] = mapped_column(default=True)
 

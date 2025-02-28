@@ -42,8 +42,8 @@ def session():
 # user fixtures
 @pytest.fixture
 def common_user(session) -> User:
-    password = fake_data.password()
-    hashed_password = hash_password(password)
+    user_password = "senha_do_usuario123"
+    hashed_password = hash_password(user_password)
 
     name = fake_data.name()
     nickname = fake_data.pystr()
