@@ -1,7 +1,11 @@
 from http import HTTPStatus
 
+from sqlalchemy import select
 
-def test_create_user_success(client):
+from app.models.user import User
+
+
+def test_create_user_success(client, session):
     response = client.post(
         "/users",
         json={
@@ -12,9 +16,12 @@ def test_create_user_success(client):
         }
     )
 
+    james_user_id = session.scalar(select(User.id).where(User.nickname == "james_"))
+
     assert response.status_code == HTTPStatus.CREATED
     assert response.json() == {
         "name": "James",
+        "id": james_user_id,
         "nickname": "james_",
         "email": "james@gmail.com"
     }

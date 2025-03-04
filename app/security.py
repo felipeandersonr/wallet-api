@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from fastapi import Depends, HTTPException
+from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -8,10 +9,13 @@ from app.models.user import User
 from app.models.user_authenticator import UserAuthenticator
 
 
-def get_current_user(token: str, session: Session = Depends(get_session)) -> User:
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+def get_current_user(token: str = Depends(oauth2_scheme), session: Session = Depends(get_session)) -> User:
     authenticator = session.scalar(
         select(UserAuthenticator)
-        .where(UserAuthenticator.token == token and UserAuthenticator.is_active == True)
+        .where(UserAuthenticator.token == token, UserAuthenticator.is_active == True)
     ) 
 
     credentials_exception = HTTPException(

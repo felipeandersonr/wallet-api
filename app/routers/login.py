@@ -8,6 +8,7 @@ from app.database import get_session
 from app.models.user import User
 from app.security import get_current_user
 from app.shcemas.login import TokenPublic
+from app.shcemas.generic import Message
 
 
 router = APIRouter()
@@ -20,14 +21,16 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), session: Session = D
     return token
 
 
-@router.delete("/logout/{user_id}")
-def logout(user_id: int, user: User = Depends(get_current_user), session: Session = Depends(get_session)):
+@router.delete("/logout/{user_id}", response_model=Message)
+def logout(user_id: int, session: Session = Depends(get_session), user: User = Depends(get_current_user)):
     if user.id != user_id:
         raise HTTPException(
             detail="Not enough permissions",
             status_code=HTTPStatus.FORBIDDEN 
         )
     
-    result = LoginController(session).logout(user_id)
+    LoginController(session).logout(user_id)
 
-    return result
+    message = {"message": "Authorization token deleted"}
+
+    return message

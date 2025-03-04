@@ -9,6 +9,8 @@ from app.models.user import User
 from app.models.user_authenticator import UserAuthenticator
 from app.utils.fake_data import fake_data
 from app.utils.safety import hash_password
+from tests.utils.user import create_test_user
+from tests.utils.user_authenticator import create_test_user_authenticator
 
 
 @pytest.fixture
@@ -43,37 +45,14 @@ def session():
 # user fixtures
 @pytest.fixture
 def common_user(session) -> User:
-    user_password = "senha_do_usuario123"
-    hashed_password = hash_password(user_password)
-
-    name = fake_data.name()
-    nickname = fake_data.pystr()
-    email = fake_data.email()
-
-    new_user = User(
-        name=name,
-        email=email,
-        nickname=nickname,
-        hashed_password=hashed_password
-    )
-
-    session.add(new_user)
-    session.commit()
-
-    return new_user
+    common_user = create_test_user(session)
+    
+    return common_user
 
 
 # user authenticator fixtures 
 @pytest.fixture
 def common_user_authenticated(session, common_user):
-    new_authenticator = UserAuthenticator(
-        user_id=common_user.id
-    )
+    common_user_authenticated = create_test_user_authenticator(session, common_user)
 
-    new_authenticator.generate()
-    new_authenticator.use()
-
-    session.add(new_authenticator)
-    session.commit()
-
-    return new_authenticator
+    return common_user_authenticated

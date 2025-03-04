@@ -61,8 +61,6 @@ class LoginController(BaseController):
         self.session.commit()
 
     def _deactivate_old_user_authenticator(self, user_id: int):
-        active_token = self.session.query(UserAuthenticator)\
+        self.session.query(UserAuthenticator)\
             .filter(UserAuthenticator.user_id == user_id and UserAuthenticator.is_active == True)\
             .update({"is_active": False})
-
-        self.session.refresh(active_token)

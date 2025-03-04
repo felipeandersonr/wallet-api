@@ -47,6 +47,7 @@ class UserController(BaseController):
         logger.info(f"create user {new_user.name}/{new_user.email} in database")
 
         user_public = UserPublic(
+            id=new_user.id,
             name=user_data.name,
             email=user_data.email,
             nickname=user_data.nickname
