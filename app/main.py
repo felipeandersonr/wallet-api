@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
 
-from app.exceptions import http_exception_handler, validation_exception_handler, generic_exception_handler
+from app.exceptions.exception_heandlers import http_exception_handler, validation_exception_handler, generic_exception_handler
 from app.routers import user, login
 
 
