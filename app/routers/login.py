@@ -1,5 +1,4 @@
-from http import HTTPStatus
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
@@ -9,9 +8,10 @@ from app.models.user import User
 from app.security import get_current_user
 from app.shcemas.login import TokenPublic
 from app.shcemas.generic import Message
+from app.exceptions.permissions import permission_exceptions
 
 
-router = APIRouter()
+router = APIRouter(prefix="/auth", tags=["token"])
 
 
 @router.post("/login", response_model=TokenPublic)
@@ -24,10 +24,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), session: Session = D
 @router.delete("/logout/{user_id}", response_model=Message)
 def logout(user_id: int, session: Session = Depends(get_session), user: User = Depends(get_current_user)):
     if user.id != user_id:
-        raise HTTPException(
-            detail="Not enough permissions",
-            status_code=HTTPStatus.FORBIDDEN 
-        )
+        permission_exceptions.not_enought_permission()
     
     LoginController(session).logout(user_id)
 

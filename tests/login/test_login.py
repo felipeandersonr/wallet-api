@@ -10,7 +10,7 @@ def test_login_success(client, common_user, session):
     user_password = "senha_do_usuario123"
 
     response = client.post(
-        "/login", 
+        "/auth/login", 
         data={
             "username": common_user.nickname, 
             "password": user_password
@@ -33,7 +33,7 @@ def test_login_success(client, common_user, session):
 
 def test_login_with_user_does_not_exist(client):
     response = client.post(
-        "/login", 
+        "/auth/login", 
         data={
             "username": "does_not_exist_user_nickname", 
             "password": "123"
@@ -51,7 +51,7 @@ def test_login_with_incorrect_nickname(client, common_user):
     user_password = "senha_do_usuario123"
 
     response = client.post(
-        "/login", 
+        "/auth/login", 
         data={
             "username": "incorrect_nickname", 
             "password": user_password
@@ -70,7 +70,7 @@ def test_login_with_incorrect_password(client, common_user):
     user_password = "incorrect_user_password"
     
     response = client.post(
-        "/login", 
+        "/auth/login", 
         data={
             "username": common_user.nickname, 
             "password": user_password

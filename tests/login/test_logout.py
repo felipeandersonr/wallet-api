@@ -6,7 +6,7 @@ from tests.utils.user_authenticator import create_test_user_authenticator
 
 def test_logout_success(client, common_user_authenticated):
     response = client.delete(
-        f"/logout/{common_user_authenticated.user_id}", 
+        f"/auth/logout/{common_user_authenticated.user_id}", 
         headers={"Authorization": f"Bearer {common_user_authenticated.token}"},
     )
 
@@ -21,7 +21,7 @@ def test_logout_with_no_permission_user(client, session, common_user_authenticat
     new_user_authenticated = create_test_user_authenticator(session, new_user)
 
     response = client.delete(
-        f"/logout/{common_user_authenticated.user_id}", 
+        f"/auth/logout/{common_user_authenticated.user_id}", 
         headers={"Authorization": f"Bearer {new_user_authenticated.token}"}
     )
 
