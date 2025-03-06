@@ -11,7 +11,7 @@ from app.shcemas.generic import Message
 from app.exceptions.permissions import permission_exceptions
 
 
-router = APIRouter()
+router = APIRouter(prefix="/auth", tags=["token"])
 
 
 @router.post("/login", response_model=TokenPublic)

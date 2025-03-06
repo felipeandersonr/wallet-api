@@ -18,8 +18,7 @@ class WalletController(BaseController):
         return wallet
         
     def create_wallet_by_user_id(self, user_id: int) -> Wallet:
-        statement = self.session.select(exists().where(Wallet.user_id == user_id))
-        exists_wallet = self.session.scalar(statement)
+        exists_wallet = bool(self.session.scalar(select(Wallet.id).where(Wallet.user_id == user_id)))
 
         if exists_wallet:
             raise HTTPException(

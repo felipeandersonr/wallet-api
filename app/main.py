@@ -3,7 +3,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
 
 from app.exceptions.exception_heandlers import http_exception_handler, validation_exception_handler, generic_exception_handler
-from app.routers import user, login
+from app.routers import user, login, wallet
 
 
 app = FastAPI()
@@ -16,6 +16,7 @@ app.add_exception_handler(Exception, generic_exception_handler)
 # routers
 app.include_router(user.router)
 app.include_router(login.router)
+app.include_router(wallet.router)
 
 
 @app.get("/")

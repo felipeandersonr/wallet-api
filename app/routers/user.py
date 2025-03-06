@@ -8,10 +8,10 @@ from app.database import get_session
 from app.shcemas.user import UserPublic, UserSchema
 
 
-router = APIRouter()
+router = APIRouter(prefix="/users", tags=["user"])
 
 
-@router.post("/users/", status_code=HTTPStatus.CREATED, response_model=UserPublic)
+@router.post("/", status_code=HTTPStatus.CREATED, response_model=UserPublic)
 def create_user(user_data: UserSchema, session: Session = Depends(get_session)):
     new_user = UserController(session).create_user(user_data)
 
