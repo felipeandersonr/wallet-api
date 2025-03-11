@@ -1,13 +1,13 @@
+from datetime import datetime
 from http import HTTPStatus
 
+from app.utils.fake_data import faker_data
 from tests.utils.transaction import create_many_test_transaction, create_test_transaction
 from tests.utils.user import create_test_user
 from tests.utils.wallet import create_test_wallet
 
 
 def test_get_transaction_success(client, session, wallet_from_common_user, common_user_authenticated):
-    # buscar varias transacoes realizadas por um usuario com paginacao
-
     another_user = create_test_user(session=session)
     wallet_from_another_user = create_test_wallet(session=session, user_id=another_user.id)
 
@@ -25,7 +25,7 @@ def test_get_transaction_success(client, session, wallet_from_common_user, commo
         destination_wallet_id=wallet_from_common_user.id
     )
 
-    response = client.get(
+    response = client.post(
         f"/transaction/{common_user_authenticated.user_id}", 
         headers={"Authorization": f"Bearer {common_user_authenticated.token}"}
     )
@@ -55,9 +55,15 @@ def test_get_transactions_with_pagination(client, session, common_user_authentic
         destination_wallet_id=wallet_from_another_user.id
     )
 
-    response = client.get(
-        f"/transaction/{common_user_authenticated.user_id}?offset=0&limit=3", 
-        headers={"Authorization": f"Bearer {common_user_authenticated.token}"}
+    response = client.post(
+        f"/transaction/{common_user_authenticated.user_id}", 
+        headers={"Authorization": f"Bearer {common_user_authenticated.token}"}, 
+        json={
+            "pagination": {
+                "offset": 0, 
+                "limit": 3
+            }
+        }
     )
 
     response_json = response.json()
@@ -83,9 +89,12 @@ def test_get_incoming_transactions(client, session, wallet_from_common_user, com
         destination_wallet_id=wallet_from_common_user.id
     )
 
-    response = client.get(
-        f"/transaction/{common_user_authenticated.user_id}?only_incoming=true", 
-        headers={"Authorization": f"Bearer {common_user_authenticated.token}"}
+    response = client.post(
+        f"/transaction/{common_user_authenticated.user_id}", 
+        headers={"Authorization": f"Bearer {common_user_authenticated.token}"}, 
+        json={
+            "only_incoming": True
+        }
     )
 
     response_json = response.json()
@@ -114,9 +123,12 @@ def test_get_outgoing_transactions(client, session, common_user_authenticated, w
         destination_wallet_id=wallet_from_common_user.id
     )
 
-    response = client.get(
-        f"/transaction/{common_user_authenticated.user_id}?only_outgoing=true", 
-        headers={"Authorization": f"Bearer {common_user_authenticated.token}"}
+    response = client.post(
+        f"/transaction/{common_user_authenticated.user_id}", 
+        headers={"Authorization": f"Bearer {common_user_authenticated.token}"}, 
+        json={
+            "only_outgoing": True
+        }
     )
 
     response_json = response.json()
@@ -128,10 +140,14 @@ def test_get_outgoing_transactions(client, session, common_user_authenticated, w
         assert transaction["destination_wallet_id"] != wallet_from_common_user.id 
 
 
-def test_get_incoming_and_outgoing_transactions_filters(client, session, wallet_from_common_user, common_user_authenticated):
-    response = client.get(
-        f"/transaction/{common_user_authenticated.user_id}?only_incoming=true&only_outgoing=true", 
-        headers={"Authorization": f"Bearer {common_user_authenticated.token}"}
+def test_get_incoming_and_outgoing_transactions_filters(client, common_user_authenticated):
+    response = client.post(
+        f"/transaction/{common_user_authenticated.user_id}", 
+        headers={"Authorization": f"Bearer {common_user_authenticated.token}"}, 
+        json={
+            "only_incoming": True, 
+            "only_outgoing": True
+        }
     )
 
     response_json = response.json()
@@ -141,16 +157,56 @@ def test_get_incoming_and_outgoing_transactions_filters(client, session, wallet_
     assert response_json["error"] == "You can only request incoming or outgoing transactions at a time, not both"
 
 
-def test_get_transactions_in_specific_datetime_range(client):
-    # todo: fazer o campo de filtro relacionado a datetime range (criado entre o espaco de tempo selecionado pelo usuario)
-    
-    pass
+def test_get_transactions_in_specific_datetime_range(client, session, common_user_authenticated, wallet_from_common_user):
+    another_user = create_test_user(session=session)
+    wallet_from_another_user = create_test_wallet(session=session, user_id=another_user.id)
+
+    start_datetime_range = datetime(year=2020, month=1, day=10)
+    end_datetime_range = datetime(year=2020, month=2, day=14)
+
+    transactions = create_many_test_transaction(
+        many_times=3,
+        session=session, 
+        sender_wallet_id=wallet_from_another_user.id, 
+        destination_wallet_id=wallet_from_common_user.id
+    )
+
+    select_transactions = [transactions[0], transactions[1]]
+
+    for selected_transaction in select_transactions:
+        selected_transaction.created_at = faker_data.date_between(start_date=start_datetime_range, end_date=end_datetime_range)
+
+        session.commit()
+        session.refresh(selected_transaction)
+
+    response = client.post(
+        f"/transaction/{common_user_authenticated.user_id}", 
+        headers={"Authorization": f"Bearer {common_user_authenticated.token}"}, 
+        json={
+            "start_date": str(start_datetime_range),
+            "end_date": str(end_datetime_range)
+        }
+    )
+
+    response_json = response.json()
+
+    assert response.status_code == HTTPStatus.OK
+
+    for transaction in response_json:
+        assert transaction["created_at"] >= str(start_datetime_range)
+        assert transaction["created_at"] <= str(end_datetime_range)
 
 
 def test_get_transactions_with_invalid_pagination(client, common_user_authenticated):
-    response = client.get(
-        f"/transaction/{common_user_authenticated.user_id}?offset=0&limit=-1", 
-        headers={"Authorization": f"Bearer {common_user_authenticated.token}"}
+    response = client.post(
+        f"/transaction/{common_user_authenticated.user_id}", 
+        headers={"Authorization": f"Bearer {common_user_authenticated.token}"}, 
+        json={
+            "pagination": {
+                "offset": 0, 
+                "limit": -1
+            }
+        }
     )
 
     response_json = response.json()
@@ -159,7 +215,13 @@ def test_get_transactions_with_invalid_pagination(client, common_user_authentica
     assert response_json["details"] == "Value error, limit and offset must be non-negative integers"
 
 
-def test_get_transactions_without_permission(client):
-    # buscar transacoes de outro usuario
+def test_get_transactions_without_permission(client, session, common_user_authenticated):
+    another_user = create_test_user(session=session)
 
-    pass
+    response = client.post(
+        f"/transaction/{another_user.id}", 
+        headers={"Authorization": f"Bearer {common_user_authenticated.token}"}
+    )
+
+    assert response.status_code == HTTPStatus.FORBIDDEN
+    assert response.json()["error"] == "Not enough permissions" 

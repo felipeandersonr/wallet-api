@@ -1,3 +1,4 @@
+from datetime import date
 from http import HTTPStatus
 from fastapi import HTTPException
 from sqlalchemy import or_, select
@@ -12,6 +13,8 @@ class TransactionController(BaseController):
     def get_transactions(self, 
                          pagination: FilterPage, 
                          user_id: int | None = None, 
+                         end_date: date | None = None, 
+                         start_date: date | None = None,
                          only_incoming_transactions: bool = False,
                          only_outgoing_transactions: bool = False) -> list[Transaction]:
         
@@ -35,8 +38,17 @@ class TransactionController(BaseController):
 
             statement = statement.join(User, Wallet.user_id == User.id).where(User.id == user_id)
 
+        if start_date:
+            statement = statement.where(Transaction.created_at >= start_date)
+
+        if end_date:
+            statement = statement.where(Transaction.created_at <= end_date)
+
+        if pagination:
+            statement = statement.offset(pagination.offset).limit(pagination.limit)
+
         statement = statement.distinct()
 
-        transactions = self.session.scalars(statement.offset(pagination.offset).limit(pagination.limit)).all()
+        transactions = self.session.scalars(statement).all()
 
         return transactions
