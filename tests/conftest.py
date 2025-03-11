@@ -6,11 +6,9 @@ from starlette.testclient import TestClient
 from app.main import app
 from app.database import table_registry, get_session
 from app.models.user import User
-from app.models.user_authenticator import UserAuthenticator
-from app.utils.fake_data import fake_data
-from app.utils.safety import hash_password
 from tests.utils.user import create_test_user
 from tests.utils.user_authenticator import create_test_user_authenticator
+from tests.utils.wallet import create_test_wallet
 
 
 @pytest.fixture
@@ -56,3 +54,11 @@ def common_user_authenticated(session, common_user):
     common_user_authenticated = create_test_user_authenticator(session, common_user)
 
     return common_user_authenticated
+
+
+# wallet
+@pytest.fixture
+def wallet_from_common_user(session, common_user):
+    wallet = create_test_wallet(session=session, user_id=common_user.id)
+
+    return wallet
