@@ -1,4 +1,5 @@
 from fastapi import HTTPException, Request
+from fastapi.exceptions import RequestValidationError
 from pydantic import ValidationError
 from starlette.responses import JSONResponse
 
@@ -26,6 +27,20 @@ async def validation_exception_handler(request: Request, exc: ValidationError):
         }
     )
 
+    return exception
+
+
+async def request_validation_exception_handler(request: Request, exc: RequestValidationError):
+    detail_str = str(exc.errors()[0]["msg"]) if exc.errors() else "Invalid input"
+    
+    exception = JSONResponse(
+        status_code=422,
+        content={
+            "details": detail_str,
+            "error": "Validation Error",
+        }
+    )
+    
     return exception
 
 

@@ -1,12 +1,9 @@
 from http import HTTPStatus
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from fastapi import APIRouter
 
+from app.utils.annotated import CurrentUser, GetSession
 from app.controller.wallet import WalletController
-from app.database import get_session
 from app.exceptions.permissions import permission_exceptions
-from app.models.user import User
-from app.security import get_current_user
 from app.shcemas.wallet import WalletPublic
 
 
@@ -14,7 +11,7 @@ router = APIRouter(prefix="/wallet", tags=["wallet"])
 
 
 @router.get("/{user_id}", response_model=WalletPublic)
-def get_wallet(user_id: int, session: Session = Depends(get_session), user: User = Depends(get_current_user)) -> WalletPublic:
+def get_wallet(user_id: int, session: GetSession, user: CurrentUser) -> WalletPublic:
     if user_id != user.id:    
         permission_exceptions.not_enought_permission()
  
@@ -24,7 +21,7 @@ def get_wallet(user_id: int, session: Session = Depends(get_session), user: User
 
 
 @router.post("/{user_id}", status_code=HTTPStatus.CREATED, response_model=WalletPublic)
-def create_wallet(user_id: int, session: Session = Depends(get_session), user: User = Depends(get_current_user)) -> WalletPublic:
+def create_wallet(user_id: int, session: GetSession, user: CurrentUser) -> WalletPublic:
     if user_id != user.id:    
         permission_exceptions.not_enought_permission()
 
