@@ -52,3 +52,46 @@ class TransactionController(BaseController):
         transactions = self.session.scalars(statement).all()
 
         return transactions
+    
+
+    def get_wallet_id_by_user_id(self, user_id: int) -> int | None:
+        wallet_id = self.session.scalar(select(Wallet.id).where(Wallet.user_id == user_id))
+
+        return wallet_id
+
+
+    def create_transaction(self, sender_user_id: int, destination_user_id: int, value: float) -> Transaction:
+        if sender_user_id == destination_user_id:
+            raise HTTPException(
+                status_code=HTTPStatus.BAD_REQUEST,
+                detail="Cannot carry out a transaction for you"
+            )
+        
+        sender_wallet_id = self.get_wallet_id_by_user_id(user_id=sender_user_id)
+        destination_wallet_id = self.get_wallet_id_by_user_id(user_id=destination_user_id)    
+
+        if not sender_wallet_id or not destination_wallet_id:
+            raise HTTPException(
+                status_code=HTTPStatus.NOT_FOUND, 
+                detail="User has no wallet"
+            )
+        
+        user_sender_balance = self.session.scalar(select(Wallet.balance).where(Wallet.user_id == sender_user_id))
+
+        if user_sender_balance < value:
+            raise HTTPException(
+                detail="Insufficient balance", 
+                status_code=HTTPStatus.PAYMENT_REQUIRED
+            )
+        
+        new_transaction = Transaction(
+            value=value,
+            sender_wallet_id=sender_wallet_id, 
+            destination_wallet_id=destination_wallet_id
+        )
+
+        self.session.add(new_transaction)
+        self.session.commit()
+
+        return new_transaction
+    

@@ -38,3 +38,23 @@ def get_transactions(user_id: int, user: CurrentUser, session: GetSession, filte
     )
 
     return transactions
+
+
+class CreteTransactionFiltersModel(BaseModel):
+    value: float
+    sender_user_id: int
+    destination_user_id: int
+
+
+@router.post("/create/", status_code=HTTPStatus.CREATED, response_model=TransactionPublic)
+def create_transaction(session: GetSession, user: CurrentUser, filters: CreteTransactionFiltersModel = Body(...)):
+    if user.id != filters.sender_user_id:
+        raise permission_exceptions.not_enought_permission()
+
+    new_transaction = TransactionController(session=session).create_transaction(
+        value=filters.value,
+        sender_user_id=filters.sender_user_id, 
+        destination_user_id=filters.destination_user_id
+    )
+
+    return new_transaction
