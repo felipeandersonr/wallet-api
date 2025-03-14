@@ -2,11 +2,13 @@ from http import HTTPStatus
 
 from fastapi import HTTPException
 from loguru import logger
-from sqlalchemy import select, exists
+from sqlalchemy import and_, or_, select, exists
 
 from app.controller.base_controller import BaseController
+from app.models.friendship import Friendship
 from app.models.user import User
 from app.shcemas.user import UserPublic, UserSchema
+from app.utils.annotated import FilterPage
 from app.utils.safety import hash_password
 
 
@@ -54,3 +56,31 @@ class UserController(BaseController):
         )
 
         return user_public
+
+
+    def get_users(self, 
+                  current_user_id: int, 
+                  nickname: str | None = None, 
+                  only_friends: bool | None = None,
+                  pagination: FilterPage | None = None) -> list[User]:
+        
+        statement = select(User)
+
+        if nickname:
+            statement = statement.where(User.nickname.ilike(f"%{nickname}%"))
+
+        if only_friends:
+            statement = statement.join(
+                Friendship,
+                or_(
+                    and_(Friendship.user_id == current_user_id, User.id == Friendship.friend_id),
+                    and_(Friendship.friend_id == current_user_id, User.id == Friendship.user_id)
+                )
+            )
+
+        if pagination:
+            statement = statement.offset(pagination.offset).limit(pagination.limit)
+
+        users = self.session.scalars(statement).all()
+
+        return users

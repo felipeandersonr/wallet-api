@@ -7,7 +7,7 @@ from app.models.user import User
 
 def test_create_user_success(client, session):
     response = client.post(
-        "/users",
+        "/users/create",
         json={
             "name": "James",
             "password": "123",
@@ -29,7 +29,7 @@ def test_create_user_success(client, session):
 
 def test_create_user_with_invalid_email(client):
     response = client.post(
-        "/users",
+        "/users/create",
         json={
             "name": "Jorge",
             "password": "123",
@@ -44,7 +44,7 @@ def test_create_user_with_invalid_email(client):
 
 def test_create_user_with_invalid_name(client):
     response = client.post(
-        "/users",
+        "/users/create",
         json={
             "name": "fe",
             "nickname": "flip",
@@ -62,7 +62,7 @@ def test_create_user_with_invalid_name(client):
 
 def test_create_user_with_invalid_nickname(client):
     response = client.post(
-        "/users",
+        "/users/create",
         json={
             "name": "fel",
             "nickname": "f",
@@ -81,7 +81,7 @@ def test_create_user_with_email_already_exists(client, common_user):
     common_user_email = common_user.email
 
     response = client.post(
-        "/users",
+        "/users/create",
         json={
             "name": "felipe",
             "nickname": "flora",
@@ -101,7 +101,7 @@ def test_create_user_with_nickname_already_exists(client, common_user):
     common_user_nickname = common_user.nickname
 
     response = client.post(
-        "/users",
+        "/users/create",
         json={
             "name": "felipe",
             "password": "super_flip",
