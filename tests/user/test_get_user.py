@@ -65,13 +65,26 @@ class TestGetUsers(BaseTest):
         assert response_json["details"] == "Value error, limit and offset must be non-negative integers"
 
 
-    def test_get_only_friends_users(self, client):
-        pass
+    def test_get_users_by_nickname(self, client, common_user_authenticated, session):
+        jhon, jane, mary = create_many_test_user(session=session, many_times=3)
 
+        jhon.nickname = "jhonfabian"
+        jane.nickname = "Janefabian"
+        mary.nickname = "Mary"
 
-    def test_get_users_by_nickname(self, client):
-        pass
+        session.commit()
 
+        response = self.request_client_post(
+            client=client, 
+            router_url="/users",
+            authorization_token=common_user_authenticated.token, 
+            json_data={
+                "nickname": "fabian"
+            }   
+        )
 
-    def test_get_only_friends_users_by_nickname(self, client):
-        pass
+        assert response.status_code == HTTPStatus.OK
+        assert len(response.json()) == 2
+
+        for user in response.json():
+            assert "fabian" in user["nickname"] 

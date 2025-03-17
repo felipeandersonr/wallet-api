@@ -29,7 +29,6 @@ def get_users(session: GetSession, user: CurrentUser, filters: GetUsersFiltersMo
         filters = GetUsersFiltersModel()
 
     users = UserController(session=session).get_users(
-        current_user_id=user.id,
         nickname=filters.nickname, 
         pagination=filters.pagination,
     )

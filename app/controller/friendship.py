@@ -1,7 +1,6 @@
 from http import HTTPStatus
-import select
 from fastapi import HTTPException
-from sqlalchemy import or_
+from sqlalchemy import and_, exists, or_, select
 from app.controller.base_controller import BaseController
 from app.models.friendship import Friendship
 from app.models.user import User
@@ -16,8 +15,8 @@ class FriendshipController(BaseController):
                 detail="You cannot send a friendship request to yourself"
             )
     
-        exists_user_statement = select(User.id).where(User.id == friend_id).exists()
-        exists_user = self.session.scalar(exists_user_statement)
+        statement = select(exists().where(User.id == friend_id))
+        exists_user = self.session.scalar(statement)
 
         if not exists_user:
             raise HTTPException(
@@ -25,12 +24,20 @@ class FriendshipController(BaseController):
                 detail="User not found"
             )
         
-        exists_friendship_statement = select(Friendship.id).where(
-            Friendship.user_id == current_user_id, 
-            Friendship.friend_id == friend_id, 
-            or_(Friendship.status == "pending", Friendship.status == "accepted"),
+        exists_friendship_statement = select(exists().select_from(Friendship).where(
+            or_(
+                and_(Friendship.user_id == current_user_id, Friendship.friend_id == friend_id), 
+                and_(Friendship.user_id == friend_id, Friendship.friend_id == current_user_id),
+            ),
+
+            or_(
+                Friendship.status == "pending",
+                Friendship.status == "accepted"
+            ),
+            
             Friendship.is_active == True
-        ).exists()
+            )
+        )
 
         exists_friendship = self.session.scalar(exists_friendship_statement)
 
