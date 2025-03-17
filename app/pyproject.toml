@@ -15,6 +15,7 @@ bcrypt = "^4.2.1"
 psycopg2 = "^2.9.10"
 loguru = "^0.7.3"
 faker = "^36.1.1"
+requests = "^2.32.3"
 
 
 [tool.poetry.group.dev.dependencies]

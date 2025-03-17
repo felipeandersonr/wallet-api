@@ -3,7 +3,7 @@ from http import HTTPStatus
 from fastapi import APIRouter, Body
 from pydantic import BaseModel
 
-from app.utils.annotated import FilterPage, GetSession
+from app.utils.annotated import CurrentUser, FilterPage, GetSession
 from app.controller.user import UserController
 from app.shcemas.user import UserPublic, UserSchema
 
@@ -20,18 +20,18 @@ def create_user(user_data: UserSchema, session: GetSession):
 
 class GetUsersFiltersModel(BaseModel):
     nickname: str = None
-    only_friends: bool = None
     pagination: FilterPage | None = None
 
 
 @router.post("/", status_code=HTTPStatus.OK, response_model=list[UserPublic])
-def get_users(session: GetSession, filters: GetUsersFiltersModel = Body(None)):
+def get_users(session: GetSession, user: CurrentUser, filters: GetUsersFiltersModel = Body(None)):
     if filters is None:
         filters = GetUsersFiltersModel()
 
     users = UserController(session=session).get_users(
+        current_user_id=user.id,
         nickname=filters.nickname, 
-        only_friends=filters.only_friends
+        pagination=filters.pagination,
     )
 
     return users

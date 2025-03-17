@@ -1,5 +1,4 @@
 from http import HTTPStatus
-
 from sqlalchemy import select
 
 from app.models.user_authenticator import UserAuthenticator

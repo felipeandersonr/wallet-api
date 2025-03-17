@@ -1,4 +1,4 @@
-from fastapi import Response
+from requests import Response
 from starlette.testclient import TestClient
 
 
@@ -60,7 +60,6 @@ class BaseTest:
 
     @staticmethod
     def request_client_delete(client: TestClient, router_url: str, authorization_token: str | None = None) -> Response:
-        
         headers = {}
 
         if authorization_token:
