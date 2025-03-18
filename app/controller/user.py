@@ -7,6 +7,7 @@ from sqlalchemy import select, exists
 from app.controller.base_controller import BaseController
 from app.models.user import User
 from app.shcemas.user import UserPublic, UserSchema
+from app.utils.annotated import FilterPage
 from app.utils.safety import hash_password
 
 
@@ -54,3 +55,17 @@ class UserController(BaseController):
         )
 
         return user_public
+
+
+    def get_users(self, nickname: str | None = None, pagination: FilterPage | None = None) -> list[User]:
+        statement = select(User)
+
+        if nickname:
+            statement = statement.where(User.nickname.ilike(f"%{nickname}%"))
+
+        if pagination:
+            statement = statement.offset(pagination.offset).limit(pagination.limit)
+
+        users = self.session.scalars(statement).all()
+
+        return users

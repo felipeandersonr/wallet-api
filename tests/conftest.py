@@ -43,9 +43,19 @@ def session():
 # user fixtures
 @pytest.fixture
 def common_user(session) -> User:
-    common_user = create_test_user(session)
+    common_user = create_test_user(session=session)
     
     return common_user
+
+
+@pytest.fixture
+def another_user(session) -> User:
+    another_user = create_test_user(
+        session=session,
+        password="another_user_password"
+    )
+    
+    return another_user
 
 
 # user authenticator fixtures 

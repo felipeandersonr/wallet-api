@@ -1,7 +1,7 @@
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from typing import Annotated
-from fastapi import Depends, Query
+from fastapi import Depends
 
 from app.database import get_session
 from app.models.user import User

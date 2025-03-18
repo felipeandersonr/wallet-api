@@ -11,10 +11,10 @@ from app.utils.annotated import FilterPage
 
 class TransactionController(BaseController):
     def get_transactions(self, 
-                         pagination: FilterPage, 
                          user_id: int | None = None, 
                          end_date: date | None = None, 
                          start_date: date | None = None,
+                         pagination: FilterPage | None = None, 
                          only_incoming_transactions: bool = False,
                          only_outgoing_transactions: bool = False) -> list[Transaction]:
         
