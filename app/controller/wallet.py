@@ -17,6 +17,7 @@ class WalletController(BaseController):
         
         return wallet
         
+    
     def create_wallet_by_user_id(self, user_id: int) -> Wallet:
         exists_wallet = self.session.scalar(select(exists().where(Wallet.user_id == user_id)))
 
@@ -35,4 +36,42 @@ class WalletController(BaseController):
         self.session.commit()
 
         return new_wallet
+    
+
+    def deposit_wallet_by_user_id(self, user_id: int, amount: float) -> Wallet:
+        if amount <= 0:
+            raise HTTPException(
+                status_code=HTTPStatus.BAD_REQUEST, 
+                detail="Amount must be greater than 0"
+            )
+        
+        wallet = self.get_wallet_by_user_id(user_id=user_id)
+
+        wallet.balance += amount
+
+        self.session.commit()
+
+        return wallet
+
+
+    def withdraw_wallet_by_user_id(self, user_id: int, amount: float) -> Wallet:    
+        if amount <= 0:
+            raise HTTPException(
+                status_code=HTTPStatus.BAD_REQUEST, 
+                detail="Amount must be greater than 0"
+            )
+    
+        wallet = self.get_wallet_by_user_id(user_id=user_id)
+
+        if wallet.balance < amount:
+            raise HTTPException(
+                status_code=HTTPStatus.BAD_REQUEST, 
+                detail="Insufficient balance"
+            )
+        
+        wallet.balance -= amount
+
+        self.session.commit()
+
+        return wallet
     

@@ -28,3 +28,24 @@ def create_wallet(user_id: int, session: GetSession, user: CurrentUser) -> Walle
     wallet = WalletController(session).create_wallet_by_user_id(user_id=user_id)
 
     return wallet
+
+
+@router.post("/deposit/{amount}", status_code=HTTPStatus.OK, response_model=WalletPublic)
+def deposit_wallet(session: GetSession, user: CurrentUser, amount: float) -> WalletPublic:
+    wallet = WalletController(session).deposit_wallet_by_user_id(
+        user_id=user.id, 
+        amount=amount
+    )
+
+    return wallet
+
+
+@router.post("/withdraw/{amount}", status_code=HTTPStatus.OK, response_model=WalletPublic)
+def withdraw_wallet(session: GetSession, user: CurrentUser, amount: float) -> WalletPublic:
+    wallet = WalletController(session).withdraw_wallet_by_user_id(
+        user_id=user.id, 
+        amount=amount
+    )
+
+    return wallet
+    
