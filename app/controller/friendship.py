@@ -102,28 +102,41 @@ class FriendshipController(BaseController):
     
 
     def get_friendships(self, 
-                        user_id: int, 
+                        is_active: bool = True, 
+                        user_id: int | None = None, 
+                        peding_status: bool = True, 
                         accepted_status: bool = True, 
                         rejected_status: bool = True, 
-                        pedding_status: bool = True, 
-                        is_active: bool = True, 
                         pagination: FilterPage | None = None) -> list[Friendship]:
         
         statement = select(Friendship)
 
-        if pedding_status:
-            statement = statement.where(Friendship.status == "pending")
+        status_conditions = []
 
+        if peding_status:
+            status_conditions.append(Friendship.status == "pending")
+        
         if accepted_status:
-            statement = statement.where(Friendship.status == "accepted")
-
+            status_conditions.append(Friendship.status == "accepted")
+        
         if rejected_status:
-            statement = statement.where(Friendship.status == "rejected")
+            status_conditions.append(Friendship.status == "rejected")
+
+        if status_conditions:
+            statement = statement.where(or_(*status_conditions))
 
         if is_active:
             statement = statement.where(Friendship.is_active == is_active)
 
         if user_id: 
+            exists_user = self.session.scalar(select(exists().select_from(User)).where(User.id == user_id))
+
+            if not exists_user:
+                raise HTTPException(
+                    status_code=HTTPStatus.NOT_FOUND, 
+                    detail="User not found"
+                )
+
             statement = statement.where(or_(Friendship.user_id == user_id, Friendship.friend_id == user_id))
 
         if pagination:

@@ -4,31 +4,33 @@ from pydantic import BaseModel
 
 from app.controller.friendship import FriendshipController
 from app.shcemas.friendship import FriendshipPublic
-from app.utils.annotated import CurrentUser, GetSession
+from app.utils.annotated import CurrentUser, FilterPage, GetSession
 
 
 router = APIRouter(prefix="/friendship", tags=["friendship"])
 
 
 class GetFriendshipModel(BaseModel):
-    user_id: int
     is_active: bool = True
-    pedding_status: bool = True
+    user_id: int | None = None
+    peding_status: bool = True
     accepted_status: bool = True
     rejected_status: bool = True
+    pagination: FilterPage | None = None
 
 
-@router.post("/{user_id}", status_code=HTTPStatus.OK , response_model=list[FriendshipPublic])
-def get_user_friendship(user_id: int, session: GetSession, user: CurrentUser, filters: GetFriendshipModel = Body(None)):
+@router.post("/", status_code=HTTPStatus.OK , response_model=list[FriendshipPublic])
+def get_user_friendship(session: GetSession, user: CurrentUser, filters: GetFriendshipModel = Body(None)):
     if filters is None:
         filters = GetFriendshipModel()
 
     friendships = FriendshipController(session=session).get_friendships(
-        user_id=user_id,
+        user_id=filters.user_id,
+        is_active=filters.is_active,
+        pagination=filters.pagination,
+        peding_status=filters.peding_status,
         accepted_status=filters.accepted_status,
-        rejected_status=filters.rejected_status,
-        pedding_status=filters.pedding_status,
-        is_active=filters.is_active
+        rejected_status=filters.rejected_status
     )   
 
     return friendships
