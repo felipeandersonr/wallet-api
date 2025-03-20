@@ -1,12 +1,15 @@
 from datetime import date
 from http import HTTPStatus
 from fastapi import HTTPException
-from sqlalchemy import or_, select
+from sqlalchemy import and_, exists, or_, select
+
 from app.controller.base_controller import BaseController
+from app.models.friendship import Friendship
 from app.models.transaction import Transaction
 from app.models.user import User
 from app.models.wallet import Wallet
 from app.utils.annotated import FilterPage
+from app.exceptions.friendship import friendship_exceptions
 
 
 class TransactionController(BaseController):
@@ -58,6 +61,31 @@ class TransactionController(BaseController):
         wallet_id = self.session.scalar(select(Wallet.id).where(Wallet.user_id == user_id))
 
         return wallet_id
+    
+
+    def check_if_users_are_friends(self, sender_user_id: int, destination_user_id: int) -> bool:
+        statement = select(
+            exists().select_from(Friendship).where(
+                or_(
+                    and_(
+                        Friendship.user_id == sender_user_id, 
+                        Friendship.friend_id == destination_user_id
+                    ),
+
+                    and_(
+                        Friendship.user_id == destination_user_id, 
+                        Friendship.friend_id == sender_user_id
+                    )
+                ), 
+
+                Friendship.status == "accepted", 
+                Friendship.is_active == True
+            )
+        )
+
+        are_users_friend = self.session.scalar(statement)
+
+        return are_users_friend
 
 
     def create_transaction(self, sender_user_id: int, destination_user_id: int, value: float) -> Transaction:
@@ -67,26 +95,32 @@ class TransactionController(BaseController):
                 detail="Cannot carry out a transaction for you"
             )
         
-        sender_wallet_id = self.get_wallet_id_by_user_id(user_id=sender_user_id)
+        sender_wallet = self.session.scalar(select(Wallet).where(Wallet.user_id == sender_user_id))
         destination_wallet_id = self.get_wallet_id_by_user_id(user_id=destination_user_id)    
 
-        if not sender_wallet_id or not destination_wallet_id:
+        if not sender_wallet or not destination_wallet_id:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND, 
                 detail="User has no wallet"
             )
         
-        user_sender_balance = self.session.scalar(select(Wallet.balance).where(Wallet.user_id == sender_user_id))
-
-        if user_sender_balance < value:
+        if sender_wallet.balance < value:
             raise HTTPException(
                 detail="Insufficient balance", 
                 status_code=HTTPStatus.PAYMENT_REQUIRED
             )
         
+        are_users_friends = self.check_if_users_are_friends(
+            sender_user_id=sender_user_id,
+            destination_user_id=destination_user_id
+        )
+        
+        if not are_users_friends:
+            raise friendship_exceptions.friendship_required()
+        
         new_transaction = Transaction(
             value=value,
-            sender_wallet_id=sender_wallet_id, 
+            sender_wallet_id=sender_wallet.id, 
             destination_wallet_id=destination_wallet_id
         )
 

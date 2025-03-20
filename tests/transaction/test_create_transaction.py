@@ -2,6 +2,7 @@ from http import HTTPStatus
 from app.controller.transaction import TransactionController
 from app.models.user import User
 from app.utils.fake_data import get_random_nonexistent_id
+from tests.utils.friendship import create_test_friendship
 from tests.utils.user import create_test_user
 from tests.utils.wallet import create_test_wallet
 from tests.base_test_class import BaseTest
@@ -17,10 +18,16 @@ class TestCreateTransaction(BaseTest):
         session.commit()
         session.refresh(wallet_from_common_user)
 
+        common_user_another_user_friendship = create_test_friendship(
+            session=session,
+            user_id=common_user_authenticated.user_id, 
+            friend_id=another_user.id,
+            status="accepted"
+        )
+
         data = {   
          "value": 150.5, 
          "destination_user_id": another_user.id,
-         "sender_user_id": common_user_authenticated.user_id
         }
 
         response = self.request_client_post(
@@ -32,7 +39,7 @@ class TestCreateTransaction(BaseTest):
 
         response_json = response.json()
 
-        sender_wallet_id = TransactionController(session=session).get_wallet_id_by_user_id(user_id=data["sender_user_id"])
+        sender_wallet_id = TransactionController(session=session).get_wallet_id_by_user_id(user_id=common_user_authenticated.user_id)
         destination_wallet_id = TransactionController(session=session).get_wallet_id_by_user_id(user_id=data["destination_user_id"])
        
         assert response.status_code == HTTPStatus.CREATED
@@ -52,7 +59,6 @@ class TestCreateTransaction(BaseTest):
             authorization_token=common_user_authenticated.token,
             json_data={
                 "value": 10000, 
-                "sender_user_id": common_user_authenticated.user_id, 
                 "destination_user_id": nonexistent_user_id
             }
         )
@@ -74,7 +80,6 @@ class TestCreateTransaction(BaseTest):
             json_data={
                 "value": 150.5, 
                 "destination_user_id": another_user.id,
-                "sender_user_id": common_user_authenticated.user_id 
             }
         )
        
@@ -101,7 +106,6 @@ class TestCreateTransaction(BaseTest):
             json_data={
                 "value": 100, 
                 "destination_user_id": another_user.id,
-                "sender_user_id": common_user_authenticated.user_id 
             }
         )
        
@@ -119,7 +123,6 @@ class TestCreateTransaction(BaseTest):
             authorization_token=common_user_authenticated.token,
             json_data={
                 "value": 100, 
-                "sender_user_id": common_user_authenticated.user_id,
                 "destination_user_id": common_user_authenticated.user_id
             }
         )
