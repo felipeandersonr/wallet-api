@@ -57,7 +57,7 @@ class UserController(BaseController):
         return user_public
 
 
-    def get_users(self, nickname: str | None = None, pagination: FilterPage | None = None) -> list[User]:
+    def get_users(self, nickname: str = None, pagination: FilterPage = None) -> list[User]:
         statement = select(User)
 
         if nickname:

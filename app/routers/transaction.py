@@ -1,23 +1,13 @@
-from datetime import date
 from http import HTTPStatus
 from fastapi import APIRouter, Body
-from pydantic import BaseModel
 
-from app.utils.annotated import CurrentUser, FilterPage, GetSession
+from app.utils.annotated import CurrentUser, GetSession
 from app.controller.transaction import TransactionController
-from app.shcemas.transaction import TransactionPublic
+from app.shcemas.transaction import CreteTransactionFiltersModel, TransactionFiltersModel, TransactionPublic
 from app.exceptions.permissions import permission_exceptions
 
 
 router = APIRouter(prefix="/transaction", tags=["transaction"])
-
-
-class TransactionFiltersModel(BaseModel):
-    only_incoming: bool = False
-    only_outgoing: bool = False
-    end_date: date | None = None
-    start_date: date | None = None
-    pagination: FilterPage | None = None
 
 
 @router.post("/{user_id}", status_code=HTTPStatus.OK, response_model=list[TransactionPublic])
@@ -38,11 +28,6 @@ def get_transactions(user_id: int, user: CurrentUser, session: GetSession, filte
     )
 
     return transactions
-
-
-class CreteTransactionFiltersModel(BaseModel):
-    value: float
-    destination_user_id: int
 
 
 @router.post("/create/", status_code=HTTPStatus.CREATED, response_model=TransactionPublic)

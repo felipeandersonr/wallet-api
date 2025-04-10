@@ -1,5 +1,7 @@
 from pydantic import BaseModel, EmailStr, field_validator
 
+from app.utils.annotated import FilterPage
+
 
 class UserSchema(BaseModel):
     name: str
@@ -21,3 +23,8 @@ class UserPublic(BaseModel):
     name: str
     nickname: str
     email: EmailStr
+
+
+class GetUsersFiltersModel(BaseModel):
+    nickname: str | None = None
+    pagination: FilterPage | None = None

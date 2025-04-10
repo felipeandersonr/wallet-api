@@ -1,11 +1,9 @@
 from http import HTTPStatus
-
 from fastapi import APIRouter, Body
-from pydantic import BaseModel
 
-from app.utils.annotated import CurrentUser, FilterPage, GetSession
+from app.utils.annotated import CurrentUser, GetSession
 from app.controller.user import UserController
-from app.shcemas.user import UserPublic, UserSchema
+from app.shcemas.user import GetUsersFiltersModel, UserPublic, UserSchema
 
 
 router = APIRouter(prefix="/users", tags=["user"])
@@ -16,11 +14,6 @@ def create_user(user_data: UserSchema, session: GetSession):
     new_user = UserController(session).create_user(user_data)
 
     return new_user
-
-
-class GetUsersFiltersModel(BaseModel):
-    nickname: str = None
-    pagination: FilterPage | None = None
 
 
 @router.post("/", status_code=HTTPStatus.OK, response_model=list[UserPublic])
