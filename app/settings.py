@@ -8,6 +8,8 @@ class Settings(BaseSettings):
     )
 
     DATABASE_URL: str
+    REDIS_HOST: str 
+    REDIS_PORT: str
 
 
 settings = Settings()

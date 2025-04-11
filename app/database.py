@@ -1,3 +1,5 @@
+import redis
+
 from datetime import datetime
 from typing import Protocol, TypeVar
 from sqlalchemy import create_engine
@@ -13,6 +15,9 @@ class SQLAlchemyModel(Protocol):
     updated_at: datetime
 
 
+table_registry = registry()
+
+
 T = TypeVar("T", bound=SQLAlchemyModel)
 
 
@@ -24,4 +29,12 @@ def get_session():
         yield session
 
 
-table_registry = registry()
+def get_client_redis_api() -> redis.Redis:
+    redis_api_client = redis.Redis(
+        host=settings.REDIS_HOST,
+        port=settings.REDIS_PORT,
+        db=0,
+        decode_responses=True
+    )
+    
+    return redis_api_client

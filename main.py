@@ -1,5 +1,6 @@
-from pydantic import ValidationError
 import uvicorn
+
+from pydantic import ValidationError
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
 
