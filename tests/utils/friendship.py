@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from app.models.friendship import Friendship
+from models.friendship import Friendship
 
 
 def create_test_friendship(session: Session, user_id: int, friend_id: int, status: str = "pending") -> Friendship:

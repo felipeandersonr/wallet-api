@@ -3,10 +3,10 @@ from http import HTTPStatus
 from fastapi import APIRouter, Body
 from pydantic import BaseModel
 
-from app.utils.annotated import CurrentUser, FilterPage, GetSession
-from app.controller.transaction import TransactionController
-from app.shcemas.transaction import TransactionPublic
-from app.exceptions.permissions import permission_exceptions
+from utils.annotated import CurrentUser, FilterPage, GetSession
+from controller.transaction import TransactionController
+from shcemas.transaction import TransactionPublic
+from exceptions.permissions import permission_exceptions
 
 
 router = APIRouter(prefix="/transaction", tags=["transaction"])

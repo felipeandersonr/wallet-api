@@ -1,10 +1,10 @@
 from http import HTTPStatus
 from fastapi import HTTPException
 from sqlalchemy import and_, exists, or_, select
-from app.controller.base_controller import BaseController
-from app.models.friendship import Friendship
-from app.models.user import User
-from app.utils.annotated import FilterPage
+from controller.base_controller import BaseController
+from models.friendship import Friendship
+from models.user import User
+from utils.annotated import FilterPage
 
 
 class FriendshipController(BaseController):

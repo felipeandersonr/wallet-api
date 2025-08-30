@@ -4,11 +4,11 @@ from fastapi import HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy import select
 
-from app.controller.base_controller import BaseController
-from app.models.user import User
-from app.models.user_authenticator import UserAuthenticator
-from app.shcemas.login import TokenPublic
-from app.utils.safety import verify_password
+from controller.base_controller import BaseController
+from models.user import User
+from models.user_authenticator import UserAuthenticator
+from shcemas.login import TokenPublic
+from utils.safety import verify_password
 
 
 class LoginController(BaseController):

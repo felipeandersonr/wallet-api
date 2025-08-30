@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 
-from app.models.user import User
-from app.utils.fake_data import faker_data
-from app.utils.safety import hash_password
+from models.user import User
+from utils.fake_data import faker_data
+from utils.safety import hash_password
 
 
 def create_test_user(session: Session, password: str = "senha_do_usuario123") -> User:

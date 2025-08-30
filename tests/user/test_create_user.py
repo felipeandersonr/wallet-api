@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from sqlalchemy import select
 
-from app.models.user import User
+from models.user import User
 from tests.base_test_class import BaseTest
 
 

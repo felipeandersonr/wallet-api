@@ -2,9 +2,9 @@ from http import HTTPStatus
 from fastapi import APIRouter, Body
 from pydantic import BaseModel
 
-from app.controller.friendship import FriendshipController
-from app.shcemas.friendship import FriendshipPublic
-from app.utils.annotated import CurrentUser, FilterPage, GetSession
+from controller.friendship import FriendshipController
+from shcemas.friendship import FriendshipPublic
+from utils.annotated import CurrentUser, FilterPage, GetSession
 
 
 router = APIRouter(prefix="/friendship", tags=["friendship"])

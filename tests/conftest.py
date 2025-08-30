@@ -3,9 +3,9 @@ from sqlalchemy import create_engine, StaticPool
 from sqlalchemy.orm import Session
 from starlette.testclient import TestClient
 
-from app.main import app
-from app.database import table_registry, get_session
-from app.models.user import User
+from main import app
+from database import table_registry, get_session
+from models.user import User
 from tests.utils.user import create_test_user
 from tests.utils.user_authenticator import create_test_user_authenticator
 from tests.utils.wallet import create_test_wallet

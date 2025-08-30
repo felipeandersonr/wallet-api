@@ -1,4 +1,4 @@
-from app.models import * 
+from models import * 
 
 from logging.config import fileConfig
 
@@ -7,8 +7,8 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from app.database import table_registry
-from app.settings import settings
+from database import table_registry
+from settings import settings
 
 
 database_url = settings.DATABASE_URL

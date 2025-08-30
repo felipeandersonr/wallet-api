@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from app.models.wallet import Wallet
+from models.wallet import Wallet
 
 
 def create_test_wallet(session: Session, user_id: int) -> Wallet:

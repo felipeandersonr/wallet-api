@@ -5,7 +5,7 @@ from faker import Faker
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.database import T
+from database import T
 
 
 faker_data = Faker()

@@ -3,7 +3,7 @@ from typing import Protocol, TypeVar
 from sqlalchemy import create_engine
 from sqlalchemy.orm import registry, Session
 
-from app.settings import settings
+from settings import settings
 
 
 class SQLAlchemyModel(Protocol):

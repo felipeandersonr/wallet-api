@@ -4,11 +4,11 @@ from fastapi import HTTPException
 from loguru import logger
 from sqlalchemy import select, exists
 
-from app.controller.base_controller import BaseController
-from app.models.user import User
-from app.shcemas.user import UserPublic, UserSchema
-from app.utils.annotated import FilterPage
-from app.utils.safety import hash_password
+from controller.base_controller import BaseController
+from models.user import User
+from shcemas.user import UserPublic, UserSchema
+from utils.annotated import FilterPage
+from utils.safety import hash_password
 
 
 class UserController(BaseController):

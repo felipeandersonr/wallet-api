@@ -3,9 +3,9 @@ from http import HTTPStatus
 from fastapi import APIRouter, Body
 from pydantic import BaseModel
 
-from app.utils.annotated import CurrentUser, FilterPage, GetSession
-from app.controller.user import UserController
-from app.shcemas.user import UserPublic, UserSchema
+from utils.annotated import CurrentUser, FilterPage, GetSession
+from controller.user import UserController
+from shcemas.user import UserPublic, UserSchema
 
 
 router = APIRouter(prefix="/users", tags=["user"])

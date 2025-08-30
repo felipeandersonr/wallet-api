@@ -3,13 +3,13 @@ from http import HTTPStatus
 from fastapi import HTTPException
 from sqlalchemy import and_, exists, or_, select
 
-from app.controller.base_controller import BaseController
-from app.models.friendship import Friendship
-from app.models.transaction import Transaction
-from app.models.user import User
-from app.models.wallet import Wallet
-from app.utils.annotated import FilterPage
-from app.exceptions.friendship import friendship_exceptions
+from controller.base_controller import BaseController
+from models.friendship import Friendship
+from models.transaction import Transaction
+from models.user import User
+from models.wallet import Wallet
+from utils.annotated import FilterPage
+from exceptions.friendship import friendship_exceptions
 
 
 class TransactionController(BaseController):

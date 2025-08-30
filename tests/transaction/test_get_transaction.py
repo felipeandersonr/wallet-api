@@ -1,7 +1,7 @@
 from datetime import datetime
 from http import HTTPStatus
 
-from app.utils.fake_data import faker_data
+from utils.fake_data import faker_data
 from tests.utils.transaction import create_many_test_transaction, create_test_transaction
 from tests.utils.user import create_test_user
 from tests.utils.wallet import create_test_wallet

@@ -3,10 +3,10 @@ from sqlalchemy.orm import Session
 from typing import Annotated
 from fastapi import Depends
 
-from app.database import get_session
-from app.models.user import User
-from app.security import get_current_user
-from app.shcemas.generic import FilterPagination, get_filter_pagination
+from database import get_session
+from models.user import User
+from security import get_current_user
+from shcemas.generic import FilterPagination, get_filter_pagination
 
 
 GetSession = Annotated[Session, Depends(get_session)]

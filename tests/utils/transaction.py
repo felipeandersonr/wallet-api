@@ -1,7 +1,7 @@
 from random import randint
 from sqlalchemy.orm import Session
 
-from app.models.transaction import Transaction
+from models.transaction import Transaction
 
 
 def create_test_transaction(session: Session, 

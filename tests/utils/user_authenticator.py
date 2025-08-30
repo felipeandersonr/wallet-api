@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
-from app.models.user import User
-from app.models.user_authenticator import UserAuthenticator
+from models.user import User
+from models.user_authenticator import UserAuthenticator
 
 
 def create_test_user_authenticator(session: Session, user: User) -> UserAuthenticator:

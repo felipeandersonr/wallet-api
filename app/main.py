@@ -3,8 +3,8 @@ import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
 
-from app.exceptions.exception_heandlers import http_exception_handler, request_validation_exception_handler, validation_exception_handler, generic_exception_handler
-from app.routers import transaction, user, login, wallet, friendship
+from exceptions.exception_heandlers import http_exception_handler, request_validation_exception_handler, validation_exception_handler, generic_exception_handler
+from routers import transaction, user, login, wallet, friendship
 
 
 app = FastAPI(swagger_ui_parameters={"syntaxHighlight": {"theme": "obsidian"}})

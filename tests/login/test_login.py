@@ -1,7 +1,7 @@
 from http import HTTPStatus
 from sqlalchemy import select
 
-from app.models.user_authenticator import UserAuthenticator
+from models.user_authenticator import UserAuthenticator
 from tests.base_test_class import BaseTest
 
 

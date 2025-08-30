@@ -1,10 +1,10 @@
 from http import HTTPStatus
 from fastapi import APIRouter
 
-from app.utils.annotated import CurrentUser, GetSession
-from app.controller.wallet import WalletController
-from app.exceptions.permissions import permission_exceptions
-from app.shcemas.wallet import WalletPublic
+from utils.annotated import CurrentUser, GetSession
+from controller.wallet import WalletController
+from exceptions.permissions import permission_exceptions
+from shcemas.wallet import WalletPublic
 
 
 router = APIRouter(prefix="/wallet", tags=["wallet"])

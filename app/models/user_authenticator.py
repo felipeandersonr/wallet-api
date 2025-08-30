@@ -3,8 +3,8 @@ from datetime import datetime, timezone
 from sqlalchemy import func, ForeignKey, TIMESTAMP
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.database import table_registry
-from app.utils.safety import generate_random_token
+from database import table_registry
+from utils.safety import generate_random_token
 
 
 @table_registry.mapped_as_dataclass

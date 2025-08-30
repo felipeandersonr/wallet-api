@@ -1,8 +1,8 @@
 from http import HTTPStatus
 from fastapi import HTTPException
 from sqlalchemy import exists, select
-from app.controller.base_controller import BaseController
-from app.models.wallet import Wallet
+from controller.base_controller import BaseController
+from models.wallet import Wallet
 
 
 class WalletController(BaseController):

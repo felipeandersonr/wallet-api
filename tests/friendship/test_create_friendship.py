@@ -1,6 +1,6 @@
 from http import HTTPStatus
-from app.models.user import User
-from app.utils.fake_data import get_random_nonexistent_id
+from models.user import User
+from utils.fake_data import get_random_nonexistent_id
 from tests.base_test_class import BaseTest
 from tests.utils.friendship import create_test_friendship
 
