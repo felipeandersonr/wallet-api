@@ -1,7 +1,8 @@
 from http import HTTPStatus
 from fastapi import HTTPException
 from sqlalchemy import and_, exists, or_, select
-from controller.base_controller import BaseController
+
+from controllers.base_controller import BaseController
 from models.friendship import Friendship
 from models.user import User
 from utils.annotated import FilterPage

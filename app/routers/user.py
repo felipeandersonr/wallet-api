@@ -4,8 +4,8 @@ from fastapi import APIRouter, Body
 from pydantic import BaseModel
 
 from utils.annotated import CurrentUser, FilterPage, GetSession
-from controller.user import UserController
-from shcemas.user import UserPublic, UserSchema
+from controllers.user import UserController
+from schemas.user import UserPublic, UserSchema
 
 
 router = APIRouter(prefix="/users", tags=["user"])

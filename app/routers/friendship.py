@@ -1,28 +1,18 @@
 from http import HTTPStatus
 from fastapi import APIRouter, Body
-from pydantic import BaseModel
 
-from controller.friendship import FriendshipController
-from shcemas.friendship import FriendshipPublic
-from utils.annotated import CurrentUser, FilterPage, GetSession
+from controllers.friendship import FriendshipController
+from schemas.friendship import FriendshipPublic, GetFriendshipFiltersModel
+from utils.annotated import CurrentUser, GetSession
 
 
 router = APIRouter(prefix="/friendship", tags=["friendship"])
 
 
-class GetFriendshipModel(BaseModel):
-    is_active: bool = True
-    user_id: int | None = None
-    peding_status: bool = True
-    accepted_status: bool = True
-    rejected_status: bool = True
-    pagination: FilterPage | None = None
-
-
 @router.post("/", status_code=HTTPStatus.OK , response_model=list[FriendshipPublic])
-def get_user_friendship(session: GetSession, user: CurrentUser, filters: GetFriendshipModel = Body(None)):
+def get_user_friendship(session: GetSession, user: CurrentUser, filters: GetFriendshipFiltersModel = Body(None)):
     if filters is None:
-        filters = GetFriendshipModel()
+        filters = GetFriendshipFiltersModel()
 
     friendships = FriendshipController(session=session).get_friendships(
         user_id=filters.user_id,

@@ -12,6 +12,15 @@ services:
     logging:
       options:
         max-size: "10m"
+  
+  redis:
+    image: redis:7.2
+    container_name: redis_local
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
 
 volumes:
   postgres_data:
+  redis_data:

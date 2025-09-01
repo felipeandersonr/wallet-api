@@ -3,7 +3,7 @@ from http import HTTPStatus
 from fastapi import HTTPException
 from sqlalchemy import and_, exists, or_, select
 
-from controller.base_controller import BaseController
+from controllers.base_controller import BaseController
 from models.friendship import Friendship
 from models.transaction import Transaction
 from models.user import User

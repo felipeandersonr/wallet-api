@@ -4,8 +4,8 @@ from fastapi import APIRouter, Body
 from pydantic import BaseModel
 
 from utils.annotated import CurrentUser, FilterPage, GetSession
-from controller.transaction import TransactionController
-from shcemas.transaction import TransactionPublic
+from controllers.transaction import TransactionController
+from schemas.transaction import TransactionPublic
 from exceptions.permissions import permission_exceptions
 
 

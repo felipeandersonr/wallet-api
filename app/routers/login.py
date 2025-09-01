@@ -1,9 +1,9 @@
 from fastapi import APIRouter
 
 from utils.annotated import CurrentUser, GetSession, OAuth2Form
-from controller.login import LoginController
-from shcemas.login import TokenPublic
-from shcemas.generic import Message
+from controllers.login import LoginController
+from schemas.login import TokenPublic
+from schemas.generic import Message
 from exceptions.permissions import permission_exceptions
 
 
